@@ -23,7 +23,16 @@
 
     <div id="sidebar-wrapper">
       <ul class="sidebar-nav">
-        <li class="sidebar-brand">Sample Title</li>
+        <li class="sidebar-brand">DC Destinations</li>
+        <div class="dropdown">
+          <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Filter
+            <span class="caret"></span>
+          </button>
+          <select data-bind="options: availableCategories, value: $root.locCategory, optionsText: 'category'"></select>
+            <li>Education</li>
+          </ul>
+        </div>
         <li data-bind="foreach: locationList">
             <a data-bind="text: title, click: $parent.viewLoc" href="#"></a>
         </li>

@@ -4,12 +4,13 @@ var map;
 // Create a new blank array for all the listing markers.
 var markers = [];
 
+// Locations. Add more here if you want more locations!
 var locations = [
-  {title: 'American University', location: {lat: 38.937352, lng: -77.088447}},
-  {title: 'Georgetown University', location: {lat: 38.907567, lng: -77.072269}},
-  {title: 'George Washington University', location: {lat: 38.899698, lng: -77.048567}},
-  {title: 'The White House', location: {lat: 38.897591, lng: -77.036598}},
-  {title: 'Lincoln Memorial', location: {lat: 38.889320, lng: -77.050089}},
+  {title: 'American University', location: {lat: 38.937352, lng: -77.088447}, category: 'Education'},
+  {title: 'Georgetown University', location: {lat: 38.907567, lng: -77.072269}, category: 'Education'},
+  {title: 'George Washington University', location: {lat: 38.899698, lng: -77.048567}, category: 'Education'},
+  {title: 'The White House', location: {lat: 38.897591, lng: -77.036598}, category: 'Attraction'},
+  {title: 'Lincoln Memorial', location: {lat: 38.889320, lng: -77.050089}, category: 'Attraction'},
 ];
 
 // Function to initialize the map within the map div
@@ -26,28 +27,7 @@ function initMap() {
   var largeInfowindow = new google.maps.InfoWindow();
   var bounds = new google.maps.LatLngBounds();
 
-  // The following group uses the location array to create an array of markers to initialize.
-  for (var i = 0; i < locations.length; i++) {
-    // Get the position form the location array.
-    var position = locations[i].location;
-    var title = locations[i].title;
-    // Create a marker per location, and put into markers array.
-    var marker = new google.maps.Marker({
-      map: map,
-      position: position,
-      title: title,
-      animation: google.maps.Animation.DROP,
-      id: i
-    });
-    // Push the marker to our array of markers.
-    markers.push(marker);
-    // Extend the boundaries of hte map for each marker.
-    bounds.extend(marker.position);
-    // Create an onlick event to open an infowindow at each marker.
-    marker.addListener('click', function() {
-      populateInfoWindow(this, largeInfowindow);
-    });
-  }
+
   map.fitBounds(bounds);
 
   // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -66,30 +46,79 @@ function initMap() {
     }
   }
 
-}
 
 
-var Loc = function(data) {
-  this.title = ko.observable(data.title);
-}
+
+  // For Dropdown Menu
+  var categoryFunc = function(titleHolder, categoryHolder) {
+    var self = this;
+    self.title = titleHolder;
+    self.locCategory = ko.observable(categoryHolder);
+  }
 
 
-// Here's my data model
-var ViewModel = function(loc) {
-  var self = this;
+  // For setting a Location
+  var Loc = function(data) {
+    this.title = ko.observable(data.title);
+  }
 
-  this.locationList = ko.observableArray([]);
 
-  locations.forEach(function(locItem){
-    self.locationList.push( new Loc(locItem) );
-  });
+  // Here's my View Model
+  var ViewModel = function(loc) {
+    var self = this;
 
-  this.currentLoc = ko.observable( this.locationList()[0] );
+    // Non-editable locations data - coming from Locations Array at top of page.
+    self.availableCategories = locations;
 
-  this.viewLoc = function(clickedLoc) {
-    self.currentLoc(clickedLoc);
+    // Locations
+    self.categoryFunc = ko.observableArray([
+      new categoryFunc("test", self.availableCategories[0])
+    ]);
+
+
+    // Generates list of locations
+    this.locationList = ko.observableArray([]);
+
+    locations.forEach(function(locItem){
+      self.locationList.push( new Loc(locItem) );
+    });
+
+    this.currentLoc = ko.observable( this.locationList()[0] );
+
+    this.viewLoc = function(clickedLoc) {
+      self.currentLoc(clickedLoc);
+    };
+
+
+    // The following group uses the location array to create an array of markers to initialize.
+    for (var i = 0; i < locations.length; i++) {
+      // Get the position from the location array.
+      var position = locations[i].location;
+      var title = locations[i].title;
+      // Create a marker per location, and put into markers array.
+      var marker = new google.maps.Marker({
+        map: map,
+        position: position,
+        title: title,
+        animation: google.maps.Animation.DROP,
+        id: i
+      });
+      // Push the marker to our array of markers.
+      markers.push(marker);
+      // Extend the boundaries of hte map for each marker.
+      bounds.extend(marker.position);
+      // Create an onlick event to open an infowindow at each marker.
+      marker.addListener('click', function() {
+        populateInfoWindow(this, largeInfowindow);
+      });
+    }
+
+
+
   };
 
-};
+  ko.applyBindings(new ViewModel()); // This makes Knockout get to work
 
-ko.applyBindings(new ViewModel()); // This makes Knockout get to work
+
+
+}
