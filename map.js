@@ -1,33 +1,95 @@
 // Create a map variable
 var map;
+
+// Create a new blank array for all the listing markers.
+var markers = [];
+
+var locations = [
+  {title: 'American University', location: {lat: 38.937352, lng: -77.088447}},
+  {title: 'Georgetown University', location: {lat: 38.907567, lng: -77.072269}},
+  {title: 'George Washington University', location: {lat: 38.899698, lng: -77.048567}},
+  {title: 'The White House', location: {lat: 38.897591, lng: -77.036598}},
+  {title: 'Lincoln Memorial', location: {lat: 38.889320, lng: -77.050089}},
+];
+
 // Function to initialize the map within the map div
 function initMap() {
-   var styles = [{"featureType":"all","elementType":"geometry","stylers":[{"color":"#1d2c4d"}]},{"featureType":"all","elementType":"labels.text.fill","stylers":[{"color":"#8ec3b9"}]},{"featureType":"all","elementType":"labels.text.stroke","stylers":[{"color":"#1a3646"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#0e1626"}]},{"featureType":"administrative.country","elementType":"geometry.stroke","stylers":[{"color":"#4b6878"}]},{"featureType":"administrative.province","elementType":"geometry.stroke","stylers":[{"color":"#4b6878"}]},{"featureType":"administrative.land_parcel","elementType":"labels.text.fill","stylers":[{"color":"#64779e"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"color":"#25374b"}]},{"featureType":"landscape.man_made","elementType":"geometry.stroke","stylers":[{"color":"#334e87"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#283e55"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#25374b"}]},{"featureType":"poi","elementType":"labels.text.fill","stylers":[{"color":"#6f9ba5"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"color":"#1d2c4d"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#2b455e"}]},{"featureType":"poi.park","elementType":"labels.text.fill","stylers":[{"color":"#3c7680"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"#162832"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#98a5be"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#1d2c4d"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#1175ba"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#0d5a8e"}]},{"featureType":"road.highway","elementType":"labels.text.fill","stylers":[{"color":"#b0d5ce"}]},{"featureType":"road.highway","elementType":"labels.text.stroke","stylers":[{"color":"#2b455e"}]},{"featureType":"transit","elementType":"labels.text.fill","stylers":[{"color":"#98a5be"}]},{"featureType":"transit","elementType":"labels.text.stroke","stylers":[{"color":"#1d2c4d"}]},{"featureType":"transit.line","elementType":"geometry.fill","stylers":[{"color":"#162832"}]},{"featureType":"transit.station","elementType":"geometry","stylers":[{"color":"#283c51"}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#0e1626"}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#4e6d70"}]}];
+  // Props to https://snazzymaps.com/style/89310/vraplha for the map styling!
+  var styles = [{"featureType":"all","elementType":"geometry","stylers":[{"color":"#1d2c4d"}]},{"featureType":"all","elementType":"labels.text.fill","stylers":[{"color":"#8ec3b9"}]},{"featureType":"all","elementType":"labels.text.stroke","stylers":[{"color":"#1a3646"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#0e1626"}]},{"featureType":"administrative.country","elementType":"geometry.stroke","stylers":[{"color":"#4b6878"}]},{"featureType":"administrative.province","elementType":"geometry.stroke","stylers":[{"color":"#4b6878"}]},{"featureType":"administrative.land_parcel","elementType":"labels.text.fill","stylers":[{"color":"#64779e"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"color":"#25374b"}]},{"featureType":"landscape.man_made","elementType":"geometry.stroke","stylers":[{"color":"#334e87"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#283e55"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#25374b"}]},{"featureType":"poi","elementType":"labels.text.fill","stylers":[{"color":"#6f9ba5"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"color":"#1d2c4d"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#2b455e"}]},{"featureType":"poi.park","elementType":"labels.text.fill","stylers":[{"color":"#3c7680"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"#162832"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#98a5be"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#1d2c4d"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#1175ba"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#0d5a8e"}]},{"featureType":"road.highway","elementType":"labels.text.fill","stylers":[{"color":"#b0d5ce"}]},{"featureType":"road.highway","elementType":"labels.text.stroke","stylers":[{"color":"#2b455e"}]},{"featureType":"transit","elementType":"labels.text.fill","stylers":[{"color":"#98a5be"}]},{"featureType":"transit","elementType":"labels.text.stroke","stylers":[{"color":"#1d2c4d"}]},{"featureType":"transit.line","elementType":"geometry.fill","stylers":[{"color":"#162832"}]},{"featureType":"transit.station","elementType":"geometry","stylers":[{"color":"#283c51"}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#0e1626"}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#4e6d70"}]}];
 
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 40.74135, lng: -73.99802},
+    zoom: 14,
+    styles: styles
+  });
 
- map = new google.maps.Map(document.getElementById('map'), {
-   center: {lat: 40.74135, lng: -73.99802},
-   zoom: 14,
-   styles: styles
- });
- // Create a single latLng literal object.
- var singleLatLng = {lat: 40.74135, lng: -73.99802};
- // TODO: Create a single marker appearing on initialize -
- // Create it with the position of the singleLatLng,
- // on the map, and give it your own title!
- // TODO: create a single infowindow, with your own content.
- // It must appear on the marker
- // TODO: create an EVENT LISTENER so that the infowindow opens when
- // the marker is clicked!
- var marker = new google.maps.Marker({
-  position: singleLatLng,
-  map: map,
-  title: 'First Market'
- });
- var infowindow = new google.maps.InfoWindow({
-  content: 'Dang Lamin Dang' + 'mah Lin'
- });
- marker.addListener('click', function() {
-  infowindow.open(map, marker);
- });
+  var largeInfowindow = new google.maps.InfoWindow();
+  var bounds = new google.maps.LatLngBounds();
+
+  // The following group uses the location array to create an array of markers to initialize.
+  for (var i = 0; i < locations.length; i++) {
+    // Get the position form the location array.
+    var position = locations[i].location;
+    var title = locations[i].title;
+    // Create a marker per location, and put into markers array.
+    var marker = new google.maps.Marker({
+      map: map,
+      position: position,
+      title: title,
+      animation: google.maps.Animation.DROP,
+      id: i
+    });
+    // Push the marker to our array of markers.
+    markers.push(marker);
+    // Extend the boundaries of hte map for each marker.
+    bounds.extend(marker.position);
+    // Create an onlick event to open an infowindow at each marker.
+    marker.addListener('click', function() {
+      populateInfoWindow(this, largeInfowindow);
+    });
+  }
+  map.fitBounds(bounds);
+
+  // This function populates the infowindow when the marker is clicked. We'll only allow
+  // one infowindow hwich will open at the marker that is clicked, and populate based
+  // on that markers position.
+  function populateInfoWindow(marker, infowindow) {
+    //Check to make sure the infowindow is not already opend on this marker.
+    if (infowindow.marker != marker) {
+      infowindow.marker = marker;
+      infowindow.setContent('<div>' + marker.title + '</div>');
+      infowindow.open(map, marker);
+      // Make sure the marker property is cleared if hte infowndiw is closed.
+      infowindow.addListener('closeclick',function() {
+        infowindow.setMarker(null);
+      });
+    }
+  }
+
 }
+
+
+var Loc = function(data) {
+  this.title = ko.observable(data.title);
+}
+
+
+// Here's my data model
+var ViewModel = function(loc) {
+  var self = this;
+
+  this.locationList = ko.observableArray([]);
+
+  locations.forEach(function(locItem){
+    self.locationList.push( new Loc(locItem) );
+  });
+
+  this.currentLoc = ko.observable( this.locationList()[0] );
+
+  this.viewLoc = function(clickedLoc) {
+    self.currentLoc(clickedLoc);
+  };
+
+};
+
+ko.applyBindings(new ViewModel()); // This makes Knockout get to work
