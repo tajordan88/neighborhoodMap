@@ -60,6 +60,7 @@ function initMap() {
   // For setting a Location
   var Loc = function(data) {
     this.title = ko.observable(data.title);
+    this.category = data.category;
   }
 
 
@@ -88,6 +89,28 @@ function initMap() {
     this.viewLoc = function(clickedLoc) {
       self.currentLoc(clickedLoc);
     };
+
+    this.myChosenValue = ko.observable('Attraction');
+
+    this.availableCategories = ko.observableArray(['All', 'Education', 'Attraction']);
+
+
+    this.filter = ko.computed(function() {
+      var myChosenValue = self.myChosenValue().toLowerCase();
+      console.log(self.myChosenValue());
+      //var filterList = [];
+      //filterList.push(self.locationList()[0]);
+      //return filterList;
+      //return self.locationList();
+      return ko.utils.arrayFilter(self.locationList(), function(location) {
+        var category = location.category.toLowerCase();
+        var hasCategory = category === myChosenValue; // true or false
+        //console.log(location);
+        console.log(location, myChosenValue, hasCategory);
+        //return true;
+        return hasCategory; // true or false
+      });
+    });
 
 
     // The following group uses the location array to create an array of markers to initialize.

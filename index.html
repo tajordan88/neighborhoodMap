@@ -31,9 +31,13 @@
           </button>
           <select data-bind="options: availableCategories, value: $root.locCategory, optionsText: 'category'"></select>
         </div>
-        <li data-bind="foreach: locationList">
-            <a data-bind="text: title, click: $parent.viewLoc" href="#"></a>
-        </li>
+
+        <p>Choose a Category:
+            <select data-bind="options: availableCategories, value: myChosenValue"></select>
+        </p>
+        <ul data-bind="foreach: filter">
+            <li><a data-bind="text: title, click: $parent.viewLoc" href="#"></a></li>
+        </ul>
       </ul>
     </div>
 
