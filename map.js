@@ -90,11 +90,12 @@ function initMap() {
       self.currentLoc(clickedLoc);
     };
 
-    this.myChosenCategory = ko.observable('Attraction');
 
+    // Filter functionality dropdown and default chosen item on load.
+    this.myChosenCategory = ko.observable('Attraction');
     this.availableCategories = ko.observableArray(['All', 'Education', 'Attraction']);
 
-
+    // Filter functionality for dropdown sidelist.
     this.filter = ko.computed(function() {
       var myChosenCategory = self.myChosenCategory().toLowerCase();
       // console.log("self.myChosenCategory(): " + self.myChosenCategory());
@@ -109,6 +110,7 @@ function initMap() {
       });
     });
 
+    //// EDIT HERE TO DO THE FILTER FUNCTIONALITY FOR MARKERS
 
     // The following group uses the location array to create an array of markers to initialize.
     for (var i = 0; i < locations.length; i++) {
