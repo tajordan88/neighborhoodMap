@@ -90,24 +90,21 @@ function initMap() {
       self.currentLoc(clickedLoc);
     };
 
-    this.myChosenValue = ko.observable('Attraction');
+    this.myChosenCategory = ko.observable('Attraction');
 
     this.availableCategories = ko.observableArray(['All', 'Education', 'Attraction']);
 
 
     this.filter = ko.computed(function() {
-      var myChosenValue = self.myChosenValue().toLowerCase();
-      console.log(self.myChosenValue());
-      //var filterList = [];
-      //filterList.push(self.locationList()[0]);
-      //return filterList;
-      //return self.locationList();
+      var myChosenCategory = self.myChosenCategory().toLowerCase();
+      // console.log("self.myChosenCategory(): " + self.myChosenCategory());
       return ko.utils.arrayFilter(self.locationList(), function(location) {
         var category = location.category.toLowerCase();
-        var hasCategory = category === myChosenValue; // true or false
-        //console.log(location);
-        console.log(location, myChosenValue, hasCategory);
-        //return true;
+        // console.log("category: " + category);
+        // console.log("myChosenCategory: " + myChosenCategory);
+        var hasCategory = (category === myChosenCategory) || (myChosenCategory === 'all'); // true or false
+        // console.log("hasCategory: " + hasCategory);
+        // console.log("location, myChosenCategory, hasCategory: " + location, myChosenCategory, hasCategory);
         return hasCategory; // true or false
       });
     });
