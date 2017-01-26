@@ -13,6 +13,34 @@ var locations = [
   {title: 'Lincoln Memorial', location: {lat: 38.889320, lng: -77.050089}, category: 'Attraction'},
 ];
 
+// This function populates the infowindow when the marker is clicked. We'll only allow
+// one infowindow hwich will open at the marker that is clicked, and populate based
+// on that markers position.
+function populateInfoWindow(marker, infowindow) {
+  //Check to make sure the infowindow is not already opend on this marker.
+  if (infowindow.marker != marker) {
+    infowindow.marker = marker;
+    infowindow.setContent('<div>' + marker.title + '</div>');
+    infowindow.open(map, marker);
+    // Make sure the marker property is cleared if hte infowndiw is closed.
+
+  }
+};
+
+// For Dropdown Menu
+var categoryFunc = function(titleHolder, categoryHolder) {
+  var self = this;
+  self.title = titleHolder;
+  self.locCategory = ko.observable(categoryHolder);
+};
+
+// For setting a Location
+var Loc = function(data) {
+  this.title = ko.observable(data.title);
+  this.category = data.category;
+  this.location = data.location;
+};
+
 // Function to initialize the map within the map div
 function initMap() {
   // Props to https://snazzymaps.com/style/89310/vraplha for the map styling!
@@ -30,117 +58,96 @@ function initMap() {
 
   map.fitBounds(bounds);
 
-  // This function populates the infowindow when the marker is clicked. We'll only allow
-  // one infowindow hwich will open at the marker that is clicked, and populate based
-  // on that markers position.
-  function populateInfoWindow(marker, infowindow) {
-    //Check to make sure the infowindow is not already opend on this marker.
-    if (infowindow.marker != marker) {
-      infowindow.marker = marker;
-      infowindow.setContent('<div>' + marker.title + '</div>');
-      infowindow.open(map, marker);
-      // Make sure the marker property is cleared if hte infowndiw is closed.
-      infowindow.addListener('closeclick',function() {
-        infowindow.setMarker(null);
-      });
-    }
-  }
-
-
-
-
-  // For Dropdown Menu
-  var categoryFunc = function(titleHolder, categoryHolder) {
-    var self = this;
-    self.title = titleHolder;
-    self.locCategory = ko.observable(categoryHolder);
-  }
-
-
-  // For setting a Location
-  var Loc = function(data) {
-    this.title = ko.observable(data.title);
-    this.category = data.category;
-  }
-
-
-  // Here's my View Model
-  var ViewModel = function(loc) {
-    var self = this;
-
-    // Non-editable locations data - coming from Locations Array at top of page.
-    self.availableCategories = locations;
-
-    // Locations
-    self.categoryFunc = ko.observableArray([
-      new categoryFunc("test", self.availableCategories[0])
-    ]);
-
-
-    // Generates list of locations
-    this.locationList = ko.observableArray([]);
-
-    locations.forEach(function(locItem){
-      self.locationList.push( new Loc(locItem) );
+  // The following group uses the location array to create an array of markers to initialize.
+  for (var i = 0; i < vm.locationList().length; i++) {
+    // Get the position from the location array.
+    var position = vm.locationList()[i].location;
+    var title = vm.locationList()[i].title();
+    // Create a marker per location, and put into markers array.
+    var marker = new google.maps.Marker({
+      map: map,
+      position: position,
+      title: title,
+      animation: google.maps.Animation.DROP,
+      id: i
     });
+    // Push the marker to our array of markers.
+    markers.push(marker);
 
-    this.currentLoc = ko.observable( this.locationList()[0] );
-
-    this.viewLoc = function(clickedLoc) {
-      self.currentLoc(clickedLoc);
-    };
-
-
-    // Filter functionality dropdown and default chosen item on load.
-    this.myChosenCategory = ko.observable('Attraction');
-    this.availableCategories = ko.observableArray(['All', 'Education', 'Attraction']);
-
-    // Filter functionality for dropdown sidelist.
-    this.filter = ko.computed(function() {
-      var myChosenCategory = self.myChosenCategory().toLowerCase();
-      // console.log("self.myChosenCategory(): " + self.myChosenCategory());
-      return ko.utils.arrayFilter(self.locationList(), function(location) {
-        var category = location.category.toLowerCase();
-        // console.log("category: " + category);
-        // console.log("myChosenCategory: " + myChosenCategory);
-        var hasCategory = (category === myChosenCategory) || (myChosenCategory === 'all'); // true or false
-        // console.log("hasCategory: " + hasCategory);
-        // console.log("location, myChosenCategory, hasCategory: " + location, myChosenCategory, hasCategory);
-        return hasCategory; // true or false
-      });
+    vm.locationList()[i].marker = marker;
+    // Extend the boundaries of hte map for each marker.
+    bounds.extend(marker.position);
+    // Create an onlick event to open an infowindow at each marker.
+    marker.addListener('click', function() {
+      populateInfoWindow(this, largeInfowindow);
     });
-
-    //// EDIT HERE TO DO THE FILTER FUNCTIONALITY FOR MARKERS
-
-    // The following group uses the location array to create an array of markers to initialize.
-    for (var i = 0; i < locations.length; i++) {
-      // Get the position from the location array.
-      var position = locations[i].location;
-      var title = locations[i].title;
-      // Create a marker per location, and put into markers array.
-      var marker = new google.maps.Marker({
-        map: map,
-        position: position,
-        title: title,
-        animation: google.maps.Animation.DROP,
-        id: i
-      });
-      // Push the marker to our array of markers.
-      markers.push(marker);
-      // Extend the boundaries of hte map for each marker.
-      bounds.extend(marker.position);
-      // Create an onlick event to open an infowindow at each marker.
-      marker.addListener('click', function() {
-        populateInfoWindow(this, largeInfowindow);
-      });
-    }
-
-
-
-  };
-
-  ko.applyBindings(new ViewModel()); // This makes Knockout get to work
-
-
+  }
 
 }
+
+// Here's my View Model
+var ViewModel = function(loc) {
+  var self = this;
+
+  // Non-editable locations data - coming from Locations Array at top of page.
+  self.availableCategories = locations;
+
+  // Locations
+  self.categoryFunc = ko.observableArray([
+    new categoryFunc("test", self.availableCategories[0])
+  ]);
+
+
+  // Generates list of locations
+  this.locationList = ko.observableArray([]);
+
+  locations.forEach(function(locItem){
+    self.locationList.push( new Loc(locItem) );
+  });
+
+  this.currentLoc = ko.observable( this.locationList()[0] );
+
+  this.viewLoc = function(clickedLoc) {
+    self.currentLoc(clickedLoc);
+  };
+
+
+  // Filter functionality dropdown and default chosen item on load.
+  this.myChosenCategory = ko.observable('All');
+  this.availableCategories = ko.observableArray(['All', 'Education', 'Attraction']);
+
+  // Filter functionality for dropdown sidelist.
+  this.filter = ko.computed(function() {
+    var myChosenCategory = self.myChosenCategory().toLowerCase();
+    // console.log("self.myChosenCategory(): " + self.myChosenCategory());
+    var newArray = ko.utils.arrayFilter(self.locationList(), function(location) {
+      console.log(location);
+      var category = location.category.toLowerCase();
+      // console.log("category: " + category);
+      // console.log("myChosenCategory: " + myChosenCategory);
+      var hasCategory = (category === myChosenCategory) || (myChosenCategory === 'all'); // true or false
+      // console.log("hasCategory: " + hasCategory);
+      // console.log("location, myChosenCategory, hasCategory: " + location, myChosenCategory, hasCategory);
+      //return hasCategory; // true or false
+
+      if (hasCategory) {
+        // show the marker
+        if (location.marker) {
+          location.marker.setVisible(true);
+        }
+        return true;
+      } else {
+        // hide the marker
+        if (location.marker) {
+          location.marker.setVisible(false);
+        }
+        return false;
+      }
+    });
+    return newArray;
+  });
+};
+
+var vm = new ViewModel();
+ko.applyBindings(vm); // This makes Knockout get to work
+
