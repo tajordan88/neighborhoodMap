@@ -15,6 +15,38 @@ var locations = [
 
 
 
+// Get information from WIKIPEDIA
+function getWikiData(title) {
+
+  // Wikipedia AJAX request
+  // console.log(title);
+  var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + title + '&format=json&callback=wikiCallback';
+
+
+  $.ajax({
+    url: wikiURL,
+    dataType: 'jsonp',
+    // jsonp: "callback",
+    success: function( response ) {
+      var articleList = response[1];
+
+      console.log(response);
+
+      for (var i = 0; i < articleList.length; i++) {
+        articleStr = articleList[i];
+        var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+      };
+    }
+  });
+
+}
+
+
+// * open marker's infowindow in success callback
+
+// * set the infowindows content using the response object
+
+
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow hwich will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -27,7 +59,7 @@ function populateInfoWindow(marker, infowindow) {
     // Make sure the marker property is cleared if hte infowndiw is closed.
 
   }
-};
+}
 
 // For Dropdown Menu
 var categoryFunc = function(titleHolder, categoryHolder) {
@@ -82,10 +114,6 @@ function initMap() {
 
 
 
-    // Wikipedia AJAX request
-    console.log(title);
-    var $wikiElem = $('#map');
-    var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + title + '&format=json&callback=wikiCallback';
 
 
 
@@ -93,21 +121,9 @@ function initMap() {
     marker.addListener('click', function() {
       populateInfoWindow(this, largeInfowindow);
 
-      $.ajax({
-        url: wikiURL,
-        dataType: 'jsonp',
-        // jsonp: "callback",
-        success: function( response ) {
-          var articleList = response[1];
 
-          for (var i = 0; i < articleList.length; i++) {
-            articleStr = articleList[i];
-            var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-            $wikiElem.append('<li><a href="' + url + '">' + articleStr + '</a></li>');
-          };
-        }
-      });
-
+      getWikiData(this.title);
+      console.log(this);
 
     });
   }
@@ -150,7 +166,7 @@ var ViewModel = function(loc) {
     var myChosenCategory = self.myChosenCategory().toLowerCase();
     // console.log("self.myChosenCategory(): " + self.myChosenCategory());
     var newArray = ko.utils.arrayFilter(self.locationList(), function(location) {
-      console.log(location);
+      // console.log(location);
       var category = location.category.toLowerCase();
       // console.log("category: " + category);
       // console.log("myChosenCategory: " + myChosenCategory);
