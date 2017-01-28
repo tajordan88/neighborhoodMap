@@ -13,6 +13,8 @@ var locations = [
   {title: 'Lincoln Memorial', location: {lat: 38.889320, lng: -77.050089}, category: 'Attraction'},
 ];
 
+
+
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow hwich will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -77,9 +79,36 @@ function initMap() {
     vm.locationList()[i].marker = marker;
     // Extend the boundaries of hte map for each marker.
     bounds.extend(marker.position);
+
+
+
+    // Wikipedia AJAX request
+    console.log(title);
+    var $wikiElem = $('#map');
+    var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + title + '&format=json&callback=wikiCallback';
+
+
+
     // Create an onlick event to open an infowindow at each marker.
     marker.addListener('click', function() {
       populateInfoWindow(this, largeInfowindow);
+
+      $.ajax({
+        url: wikiURL,
+        dataType: 'jsonp',
+        // jsonp: "callback",
+        success: function( response ) {
+          var articleList = response[1];
+
+          for (var i = 0; i < articleList.length; i++) {
+            articleStr = articleList[i];
+            var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+            $wikiElem.append('<li><a href="' + url + '">' + articleStr + '</a></li>');
+          };
+        }
+      });
+
+
     });
   }
 
