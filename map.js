@@ -15,65 +15,6 @@ var locations = [
 
 
 
-// Get information from WIKIPEDIA
-function getWikiData(title) {
-
-  // Wikipedia AJAX request
-  // console.log(title);
-  var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + title + '&format=json&callback=wikiCallback';
-
-
-  $.ajax({
-    url: wikiURL,
-    dataType: 'jsonp',
-    // jsonp: "callback",
-    success: function( response ) {
-      var articleList = response[1];
-
-      console.log(response);
-
-      for (var i = 0; i < articleList.length; i++) {
-        articleStr = articleList[i];
-        var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-      };
-    }
-  });
-
-}
-
-
-// * open marker's infowindow in success callback
-
-// * set the infowindows content using the response object
-
-
-// This function populates the infowindow when the marker is clicked. We'll only allow
-// one infowindow hwich will open at the marker that is clicked, and populate based
-// on that markers position.
-function populateInfoWindow(marker, infowindow) {
-  //Check to make sure the infowindow is not already opend on this marker.
-  if (infowindow.marker != marker) {
-    infowindow.marker = marker;
-    infowindow.setContent('<div>' + marker.title + '</div>');
-    infowindow.open(map, marker);
-    // Make sure the marker property is cleared if hte infowndiw is closed.
-
-  }
-}
-
-// For Dropdown Menu
-var categoryFunc = function(titleHolder, categoryHolder) {
-  var self = this;
-  self.title = titleHolder;
-  self.locCategory = ko.observable(categoryHolder);
-};
-
-// For setting a Location
-var Loc = function(data) {
-  this.title = ko.observable(data.title);
-  this.category = data.category;
-  this.location = data.location;
-};
 
 // Function to initialize the map within the map div
 function initMap() {
@@ -86,7 +27,10 @@ function initMap() {
     styles: styles
   });
 
-  var largeInfowindow = new google.maps.InfoWindow();
+  var largeInfowindow = new google.maps.InfoWindow({
+    content: ''
+  });
+  console.log(largeInfowindow);
   var bounds = new google.maps.LatLngBounds();
 
 
@@ -119,16 +63,97 @@ function initMap() {
 
     // Create an onlick event to open an infowindow at each marker.
     marker.addListener('click', function() {
-      populateInfoWindow(this, largeInfowindow);
+      // populateInfoWindow(this, largeInfowindow);
 
 
-      getWikiData(this.title);
-      console.log(this);
+      getWikiData(this.title, this, largeInfowindow);
+      // console.log(information);
 
     });
   }
 
 }
+
+
+
+
+// Get information from WIKIPEDIA
+function getWikiData(title, clickobjectthis, largeInfowindow) {
+
+  // Wikipedia AJAX request
+  // console.log(title);
+  var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + title + '&format=json&callback=wikiCallback';
+
+
+  $.ajax({
+    url: wikiURL,
+    dataType: 'jsonp',
+    // jsonp: "callback",
+    success: function( response ) {
+      var wikiName = response[1][0];
+      var wikiGeneralInfo = response[2][0];
+      var infoInsideInfoWindow = wikiGeneralInfo;
+
+      // console.log(response);
+      // console.log(response[1]);
+      // console.log(response[2][0]);
+      // console.log(clickobjectthis);
+      // console.log(infoInsideInfoWindow);
+
+      // var largeInfowindow = google.maps.InfoWindow({
+      //   content: infoInsideInfoWindow
+      // });
+
+
+      // This function populates the infowindow when the marker is clicked. We'll only allow
+      // one infowindow hwich will open at the marker that is clicked, and populate based
+      // on that markers position.
+      function populateInfoWindow(marker, infowindow) {
+        //Check to make sure the infowindow is not already opend on this marker.
+        if (infowindow.marker != marker) {
+          infowindow.marker = marker;
+          infowindow.setContent('<div>' + marker.title + '</div>' + '<div>' + infoInsideInfoWindow + '</div>');
+          infowindow.open(map, marker);
+          // Make sure the marker property is cleared if hte infowndiw is closed.
+        }
+      }
+
+      populateInfoWindow(clickobjectthis, largeInfowindow);
+
+
+
+      // for (var i = 0; i < articleList.length; i++) {
+      //   articleStr = articleList[i];
+      //   var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+      // };
+    }
+  });
+
+}
+
+
+// * open marker's infowindow in success callback
+
+// * set the infowindows content using the response object
+
+
+
+
+// For Dropdown Menu
+var categoryFunc = function(titleHolder, categoryHolder) {
+  var self = this;
+  self.title = titleHolder;
+  self.locCategory = ko.observable(categoryHolder);
+};
+
+// For setting a Location
+var Loc = function(data) {
+  this.title = ko.observable(data.title);
+  this.category = data.category;
+  this.location = data.location;
+};
+
+
 
 // Here's my View Model
 var ViewModel = function(loc) {
