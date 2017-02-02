@@ -30,7 +30,6 @@ function initMap() {
   var largeInfowindow = new google.maps.InfoWindow({
     content: ''
   });
-  console.log(largeInfowindow);
   var bounds = new google.maps.LatLngBounds();
 
 
@@ -60,7 +59,6 @@ function initMap() {
 
 
 
-
     // Create an onlick event to open an infowindow at each marker.
     marker.addListener('click', function() {
       // populateInfoWindow(this, largeInfowindow);
@@ -70,9 +68,30 @@ function initMap() {
       // console.log(information);
 
     });
+
+    // Bounce Animation On Click
+    marker.addListener('click', toggleBounce);
+
+
+
+
+
   }
 
+
+
+    console.log(marker);
+    function toggleBounce() {
+      if (marker.getAnimation() !== null) {
+        marker.setAnimation(null);
+      } else {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+      }
+    }
+
+
 }
+
 
 
 
@@ -130,11 +149,6 @@ function getWikiData(title, clickobjectthis, largeInfowindow) {
   });
 
 }
-
-
-// * open marker's infowindow in success callback
-
-// * set the infowindows content using the response object
 
 
 
