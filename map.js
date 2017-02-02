@@ -63,14 +63,16 @@ function initMap() {
     marker.addListener('click', function() {
       // populateInfoWindow(this, largeInfowindow);
 
-
+      var markerNum = this.id;
+      var lastMarkerNum = markers[markerNum];
       getWikiData(this.title, this, largeInfowindow);
-      // console.log(information);
+      // console.log(markerNum);
+      toggleBounce(markerNum);
 
     });
 
     // Bounce Animation On Click
-    marker.addListener('click', toggleBounce);
+    // marker.addListener('click', toggleBounce);
 
 
 
@@ -79,15 +81,14 @@ function initMap() {
   }
 
 
-
+    // Function for toggling Bounce on click of Marker
     console.log(marker);
-    function toggleBounce() {
-      if (marker.getAnimation() !== null) {
-        marker.setAnimation(null);
-      } else {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-      }
+    function toggleBounce(markerNum) {
+      var markerHolder = markerNum;
+      markers[markerNum].setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(function(){ markers[markerNum].setAnimation(null); }, 750);
     }
+
 
 
 }
