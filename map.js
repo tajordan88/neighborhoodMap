@@ -1,5 +1,6 @@
 // Create a map variable
-var map;
+var map,
+    infowindow;
 
 // Create a new blank array for all the listing markers.
 var markers = [];
@@ -27,7 +28,7 @@ function initMap() {
     styles: styles
   });
 
-  var largeInfowindow = new google.maps.InfoWindow({
+  infowindow = new google.maps.InfoWindow({
     content: ''
   });
   var bounds = new google.maps.LatLngBounds();
@@ -65,7 +66,7 @@ function initMap() {
 
       var markerNum = this.id;
       var lastMarkerNum = markers[markerNum];
-      getWikiData(this.title, this, largeInfowindow);
+      getWikiData(this.title, this);
       // console.log(markerNum);
       toggleBounce(markerNum);
 
@@ -98,7 +99,7 @@ function initMap() {
 
 
 // Get information from WIKIPEDIA
-function getWikiData(title, clickobjectthis, largeInfowindow) {
+function getWikiData(title, clickobjectthis) {
 
   // Wikipedia AJAX request
   // console.log(title);
@@ -125,20 +126,9 @@ function getWikiData(title, clickobjectthis, largeInfowindow) {
       // });
 
 
-      // This function populates the infowindow when the marker is clicked. We'll only allow
-      // one infowindow hwich will open at the marker that is clicked, and populate based
-      // on that markers position.
-      function populateInfoWindow(marker, infowindow) {
-        //Check to make sure the infowindow is not already opend on this marker.
-        if (infowindow.marker != marker) {
-          infowindow.marker = marker;
-          infowindow.setContent('<div>' + marker.title + '</div>' + '<div>' + infoInsideInfoWindow + '</div>');
-          infowindow.open(map, marker);
-          // Make sure the marker property is cleared if hte infowndiw is closed.
-        }
-      }
 
-      populateInfoWindow(clickobjectthis, largeInfowindow);
+
+      populateInfoWindow(clickobjectthis, infoInsideInfoWindow);
 
 
 
@@ -149,6 +139,19 @@ function getWikiData(title, clickobjectthis, largeInfowindow) {
     }
   });
 
+}
+
+// This function populates the infowindow when the marker is clicked. We'll only allow
+// one infowindow hwich will open at the marker that is clicked, and populate based
+// on that markers position.
+function populateInfoWindow(marker, infoInsideInfoWindow) {
+  //Check to make sure the infowindow is not already opend on this marker.
+  if (infowindow.marker != marker) {
+    infowindow.marker = marker;
+    infowindow.setContent('<div>' + marker.title + '</div>' + '<div>' + infoInsideInfoWindow + '</div>');
+    infowindow.open(map, marker);
+    // Make sure the marker property is cleared if hte infowndiw is closed.
+  }
 }
 
 
@@ -194,6 +197,7 @@ var ViewModel = function(loc) {
 
   this.viewLoc = function(clickedLoc) {
     self.currentLoc(clickedLoc);
+    getWikiData(clickedLoc.marker.title,clickedLoc.marker);
   };
 
 
