@@ -133,6 +133,20 @@ body {
         margin-right: 0;
     }
 
+}
+
+.button-container {
+    margin-bottom: 0px;
+}
+
+.btn {
+    width: 100%;
+    border-radius: 0px;
+}
+.sidebar-show {
+    width: 270px !important;
+}
+
 /* /SIDEBAR STYLES */
 
 

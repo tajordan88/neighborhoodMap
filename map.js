@@ -29,7 +29,7 @@ function initMap() {
   });
 
   infowindow = new google.maps.InfoWindow({
-    content: ''
+    maxWidth: 200
   });
   var bounds = new google.maps.LatLngBounds();
 
@@ -69,6 +69,10 @@ function initMap() {
       getWikiData(this.title, this);
       // console.log(markerNum);
       toggleBounce(markerNum);
+      // console.log(this.position.lat);
+      // var latLng = {lat: 38.937352, lng: -77.088447};
+      console.log(this);
+      // map.panTo(latLng);
 
     });
 
@@ -239,4 +243,27 @@ var ViewModel = function(loc) {
 
 var vm = new ViewModel();
 ko.applyBindings(vm); // This makes Knockout get to work
+
+
+
+
+
+// Functionality for Toggling Sidebar
+// $(document).ready(function(){
+// $('#toggle-nav-button').toggle(
+//   function() {
+//     $('#sidebar-wrapper').css('width', '270px')
+//   }, function() {
+//     $('#sidebar-wrapper').css('width', '0')
+// });
+// });
+
+$('#toggle-nav-button').on('click', function () {
+    $("#sidebar-wrapper").toggleClass('sidebar-show')
+});
+
+
+
+
+
 
