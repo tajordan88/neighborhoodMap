@@ -32,8 +32,6 @@ function initMap() {
   var bounds = new google.maps.LatLngBounds();
 
 
-  map.fitBounds(bounds);
-
   // The following group uses the location array to create an array of markers to initialize.
   for (var i = 0; i < vm.locationList().length; i++) {
     // Get the position from the location array.
@@ -63,11 +61,12 @@ function initMap() {
     });
   }
 
+  map.fitBounds(bounds);
+
 }
 
 // Function for toggling Bounce on click of Marker
 function toggleBounce(markerNum) {
-  console.log(markerNum);
   markers[markerNum].setAnimation(google.maps.Animation.BOUNCE);
   setTimeout(function() { markers[markerNum].setAnimation(null); }, 750);
 }
@@ -81,7 +80,7 @@ function getWikiData(title, clickobjectthis) {
   var timeoutText = "failed to get wikipedia resources";
   var wikiRequestTimeout = setTimeout(function(){
     populateInfoWindow(clickobjectthis, timeoutText);
-  }, 8000);
+  }, 4000);
   // Wikipedia AJAX request
   var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + title + '&format=json&callback=wikiCallback';
   $.ajax({
