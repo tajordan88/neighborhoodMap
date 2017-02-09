@@ -63,6 +63,9 @@ function initMap() {
 
   map.fitBounds(bounds);
 
+  // Error Handling for Loading Map
+  clearTimeout(mapLoadError);
+
 }
 
 // Function for toggling Bounce on click of Marker
@@ -188,6 +191,13 @@ var ViewModel = function(loc) {
 
 var vm = new ViewModel();
 ko.applyBindings(vm); // This makes Knockout get to work
+
+// Error Handling for Loading Map
+var mapLoadError = setTimeout(function(){
+  alert("Sorry, the Google Maps API Failed to Load.")
+}, 8000);
+
+
 
 
 // Functionality for Toggling Sidebar
