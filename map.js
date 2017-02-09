@@ -63,19 +63,25 @@ function initMap() {
     });
   }
 
-
-  // Function for toggling Bounce on click of Marker
-  function toggleBounce(markerNum) {
-    markers[markerNum].setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(function() { markers[markerNum].setAnimation(null); }, 750);
-  }
-
 }
+
+// Function for toggling Bounce on click of Marker
+function toggleBounce(markerNum) {
+  console.log(markerNum);
+  markers[markerNum].setAnimation(google.maps.Animation.BOUNCE);
+  setTimeout(function() { markers[markerNum].setAnimation(null); }, 750);
+}
+
+
 
 
 // Get information from WIKIPEDIA
 function getWikiData(title, clickobjectthis) {
 
+  var timeoutText = "failed to get wikipedia resources";
+  var wikiRequestTimeout = setTimeout(function(){
+    populateInfoWindow(clickobjectthis, timeoutText);
+  }, 8000);
   // Wikipedia AJAX request
   var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + title + '&format=json&callback=wikiCallback';
   $.ajax({
@@ -85,6 +91,7 @@ function getWikiData(title, clickobjectthis) {
       var wikiGeneralInfo = response[2][0];
       var infoInsideInfoWindow = wikiGeneralInfo;
       populateInfoWindow(clickobjectthis, infoInsideInfoWindow);
+      clearTimeout(wikiRequestTimeout);
     }
   });
 
@@ -147,6 +154,7 @@ var ViewModel = function(loc) {
   this.viewLoc = function(clickedLoc) {
     self.currentLoc(clickedLoc);
     getWikiData(clickedLoc.marker.title, clickedLoc.marker);
+    toggleBounce(clickedLoc.marker.id);
   };
 
 
