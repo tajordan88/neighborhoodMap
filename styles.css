@@ -149,5 +149,14 @@ body {
   width: 270px !important;
 }
 
+#sidebar-brand-custom {
+  color: #1075ba;
+}
+
+.category {
+  color: #1075ba;
+  margin-left: 20px;
+}
+
 
 /* /SIDEBAR STYLES */

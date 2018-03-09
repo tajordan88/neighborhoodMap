@@ -22,8 +22,8 @@
 <body>
   <div id="sidebar-wrapper">
     <ul class="sidebar-nav">
-      <li class="sidebar-brand">DC Destinations</li>
-      <p>Choose a Category:
+      <li id="sidebar-brand-custom" class="sidebar-brand">DC Destinations</li>
+      <p class="category">Choose a Category:
         <select data-bind="options: availableCategories, value: myChosenCategory"></select>
       </p>
       <ul data-bind="foreach: filter">
